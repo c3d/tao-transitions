@@ -1,0 +1,103 @@
+import Transitions
+
+DemoSlide "Transitions (balayage)",
+    transition_ft_wipe 1, 0  // Balayage de gauche à droite
+    TitleBox
+        text "Transitions de pages..."
+
+DemoSlide "Quand (fondu enchaîné)",
+    transition_ft_dissolve   // Fondu enchaîné
+    StoryBox
+        text "Les effets de transitions se déclenchent"
+        line_break
+        text "quand vous changez de page."
+
+DemoSlide "Par page (déplacement)",
+    transition_ft_push -1, 0  // Déplacement depuis la gauche
+    StoryBox
+        text "Vous pouvez choisir une transition pour chaque page, "
+        line_break
+        text "ou bien utiliser la même pour toutes les pages."
+
+DemoSlide "En quittant (fondu au noir)",
+    transition_fade_through_color 0, 0, 0  // Fondu au noir
+    StoryBox
+        text "L'effet associé à une page s'affiche"
+        line_break
+        text "en quittant cette page."
+
+DemoSlide "Vos propres effets (iris)",
+    transition_ft_iris 1  // Iris in
+    StoryBox
+        text "Utilisez les effets fournis,"
+        line_break
+        text "ou inventez les vôtres"
+        line_break
+        text "grâce à la primitive "
+        locally
+            font "Courier New"
+            text "transition"
+        text " !"
+
+DemoSlide "Merci (aucune)",
+    // Pas de transition
+    TitleBox
+        text "Merci."
+
+
+// Définitions
+
+StoryBox Body ->
+    text_box 0, 0, window_width, window_height,
+        color "black"
+        font "IM FELL English", 48
+        vertical_align_center
+        align_center
+        do Body
+
+TitleBox Body ->
+    StoryBox
+        font_size 60
+        do Body
+
+Preload -> 0
+Texture1 -> "http://www.taodyne.com/images/old_paper_04s.jpg"
+Texture2 -> "http://www.taodyne.com/images/old_paper_01s.jpg"
+W1 -> 0.0
+W2 -> 0.0
+DemoSlide PageName:text, Body ->
+    page PageName,
+        // Pré-chargement des deux textures avant d'afficher la page
+        if W1 = 0 and W2 = 0 then
+            refresh 0.1
+            locally
+                texture Texture1
+                W1 := texture_width
+                texture Texture2
+                W2 := texture_width
+                status "Chargement des textures depuis taodyne.com...", 1.0
+        else
+            // Texture de fond
+            locally
+                if page_number = 1 or page_number = page_count then
+                    // Première et dernière pages
+                    texture Texture1
+                else
+                    // Autre page
+                    texture Texture2
+                color "white"
+                BGScale ->
+                    if texture_width <> 0 then
+                        max(window_width/texture_width, window_height/texture_height)
+                    else
+                        1.0
+                rectangle 0, 0, texture_width*BGScale, texture_height*BGScale
+            // Contenu
+            do Body
+            // Pied de page
+            text_box 0, (50-window_height)/2, window_width, 50,
+                color "black"
+                font "IM Fell English", 36
+                vertical_align_center
+                align_center
+                text "↑ et ↓ pour changer de page"

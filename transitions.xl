@@ -1,0 +1,532 @@
+// Transitions module definition
+//
+// Commands to add special transition effects when changing pages 
+//
+// Copyright 2012 Taodyne SAS
+
+module_description
+    id "95D292E7-8198-4F86-9465-A949B5E46CB1" 
+    name "Page transition effects"
+    description "Commands to add special transition effects when changing pages"
+    import_name "Transitions"
+    author "Taodyne SAS"
+    website "http://www.taodyne.com"
+    version 1.0
+
+
+module_description "fr",
+    name "Effets de transitions entre pages"
+    description "Commandes pour ajouter des effets de transitions lors des changements de page"
+
+
+// ============================================================================
+//
+//   Dissolve
+//
+// ============================================================================
+
+transition_ft_dissolve D:real ->
+    transition D,
+        locally
+            texture_unit 1
+            frame_texture window_width, window_height,
+                transition_next_page
+            texture_unit 0
+            frame_texture window_width, window_height,
+                transition_current_page
+            dissolve_shader
+            shader_set w := window_width
+            shader_set h := window_height
+            shader_set tex1 := 0
+            shader_set tex2 := 1
+            shader_set r := transition_ratio
+            rectangle 0, 0, window_width, window_height
+
+transition_ft_dissolve -> transition_ft_dissolve 1.5
+
+dissolve_shader ->
+// ----------------------------------------------------------------------------
+//    Mix textures to implement the dissolve effect
+// ----------------------------------------------------------------------------
+    shader_program
+        fragment_shader <<
+        uniform sampler2D tex1;
+        uniform sampler2D tex2;
+        uniform float r; /* 0.0 <= r <= 1.0 */
+        void main()
+        {
+            vec2 texCoord = gl_TexCoord[0].xy;
+            vec4 pix1 = texture2D(tex1, texCoord);
+            vec4 pix2 = texture2D(tex2, texCoord);
+            gl_FragColor = mix(pix1, pix2, r);
+        }
+        >>
+
+// ============================================================================
+//
+//   Fade through solid color
+//
+// ============================================================================
+
+transition_fade_through_color R:real, G:real, B:real, D:real ->
+    transition D,
+        locally
+            if transition_time < transition_duration/2 then
+                locally
+                    transition_current_page
+                Alpha := 2*transition_ratio
+            else
+                locally
+                    transition_next_page
+                Alpha := 2*(1 - transition_ratio)
+            disable_depth_test
+            color R, G, B, Alpha
+            rectangle 0, 0, window_width, window_height
+
+transition_fade_through_color R:real, G:real, B:real ->
+    transition_fade_through_color R:real, G:real, B:real, 1.5
+
+
+// ============================================================================
+//
+//   Translate along Z, back and forth
+//
+// ============================================================================
+
+transition_ft_translate_in D: real ->
+    transition D,
+        locally
+            clear_color 0, 0, 0, 1
+            color "white"
+            TZ -> 0.0
+            if transition_time < transition_duration/2 then
+                frame_texture window_width, window_height,
+                    clear_color 1, 1, 1, 1
+                    transition_current_page
+                TZ := -20000 * 2 * transition_ratio
+            else
+                frame_texture window_width, window_height,
+                    clear_color 1, 1, 1, 1
+                    transition_next_page
+                TZ := -20000 * 2 * (1 - transition_ratio)
+            translatez TZ
+            rectangle 0, 0, window_width, window_height
+
+transition_ft_translate_in -> transition_ft_translate_in 1.5
+
+transition_ft_translate_out D:real ->
+    transition D,
+        locally
+            clear_color 0, 0, 0, 1
+            color "white"
+            TZ -> 0.0
+            if transition_time < transition_duration/2 then
+                frame_texture window_width, window_height,
+                    clear_color 1, 1, 1, 1
+                    transition_current_page
+                TZ := 1500 * 2 * transition_ratio
+            else
+                frame_texture window_width, window_height,
+                    clear_color 1, 1, 1, 1
+                    transition_next_page
+                TZ := 1500 * 2 * (1 - transition_ratio)
+            translatez TZ
+            rectangle 0, 0, window_width, window_height
+
+transition_ft_translate_out -> transition_ft_translate_out 1.5
+
+
+// ============================================================================
+//
+//   Scale back and forth
+//
+// ============================================================================
+
+transition_ft_scale_in_out D: real ->
+    transition D,
+        locally
+            clear_color 0, 0, 0, 1
+            color "white"
+            S -> 0.0
+            if transition_time < transition_duration/2 then
+                frame_texture window_width, window_height,
+                    transition_current_page
+                S := 1 - 2 * transition_ratio
+            else
+                frame_texture window_width, window_height,
+                    transition_next_page
+                S :=  2*transition_ratio - 1
+            rectangle 0, 0, S*window_width, S*window_height
+
+transition_ft_scale_in_out -> transition_ft_scale_in_out 1.5
+
+
+transition_ft_scale_out_in D: real ->
+    transition D,
+        locally
+            clear_color 0, 0, 0, 1
+            color "white"
+            S -> 0.0
+            if transition_time < transition_duration/2 then
+                frame_texture window_width, window_height,
+                    transition_current_page
+                S := 1 + 20 * transition_ratio
+            else
+                frame_texture window_width, window_height,
+                    transition_next_page
+                S := 1 + 20 * 2 * (1 - transition_ratio)
+            rectangle 0, 0, S*window_width, S*window_height
+
+transition_ft_scale_out_in -> transition_ft_scale_out_in 1.5
+
+
+// ============================================================================
+//
+//   Scale up/down
+//
+// ============================================================================
+
+transition_ft_scale_up D: real ->
+    transition D,
+        locally
+            color "white"
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_current_page
+            rectangle 0, 0, window_width, window_height
+            color "white", transition_ratio
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_next_page
+            S -> 0.0
+            S :=  transition_ratio
+            rectangle 0, 0, S*window_width, S*window_height
+
+transition_ft_scale_up -> transition_ft_scale_up 1.5
+
+transition_ft_scale_down D: real ->
+    transition D,
+        locally
+            color "white"
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_next_page
+            rectangle 0, 0, window_width, window_height
+            color "white", 1-transition_ratio
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_current_page
+            S -> 0.0
+            S :=  1-transition_ratio
+            rectangle 0, 0, S*window_width, S*window_height
+
+transition_ft_scale_down -> transition_ft_scale_down 1.5
+
+
+// ============================================================================
+//
+//   Scale in/out
+//
+// ============================================================================
+
+transition_ft_scale_in D: real ->
+    transition D,
+        locally
+            color "white"
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_current_page
+            rectangle 0, 0, window_width, window_height
+            color "white", transition_ratio
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_next_page
+            S -> 0.0
+            S :=  1 + 10*(1-transition_ratio)
+            rectangle 0, 0, S*window_width, S*window_height
+
+transition_ft_scale_in -> transition_ft_scale_in 1.5
+
+transition_ft_scale_out D: real ->
+    transition D,
+        locally
+            color "white"
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_next_page
+            rectangle 0, 0, window_width, window_height
+            color "white", 1-transition_ratio
+            frame_texture window_width, window_height,
+                clear_color 1, 1, 1, 1
+                transition_current_page
+            S -> 0.0
+            S :=  1 + 10*transition_ratio
+            rectangle 0, 0, S*window_width, S*window_height
+
+transition_ft_scale_out -> transition_ft_scale_out 1.5
+
+
+// ============================================================================
+//
+//   Push
+//
+// ============================================================================
+
+transition_ft_push LeftRight:integer, TopBottom:integer, D:real ->
+// ----------------------------------------------------------------------------
+//    Both pages are translated (new one "pushes" old one)
+// ----------------------------------------------------------------------------
+//    LeftRight: 1 = left to right, 0 = no translation, -1 = right to left
+//    TopBottom: 1 = top to bottom, 0 = no translation, -1 = bottom to top
+//    D: duration (seconds)
+  transition D,
+      locally
+          curx  N:integer -> N * transition_ratio * window_width
+          nextx N:integer -> N * (transition_ratio - 1) * window_width
+          cury   N:integer -> -N * transition_ratio * window_height
+          nexty  N:integer -> N * (1-transition_ratio) * window_height
+          color "white"
+          frame_texture window_width, window_height,
+              transition_current_page
+          locally
+              rectangle curx LeftRight, cury TopBottom, window_width, window_height
+          frame_texture window_width, window_height,
+              transition_next_page
+          locally
+              rectangle nextx LeftRight, nexty TopBottom, window_width, window_height
+
+transition_ft_push LeftRight:integer, TopBottom:integer -> transition_ft_push LeftRight, TopBottom, 1.5
+
+
+// ============================================================================
+//
+//   Iris
+//
+// ============================================================================
+
+transition_ft_iris InOut:integer, D:real ->
+// ----------------------------------------------------------------------------
+//    Vanishing (InOut = 1) or growing (InOut = -1) circle
+// ----------------------------------------------------------------------------
+  transition D,
+      locally
+          texture_unit 1
+          frame_texture window_width, window_height,
+              transition_next_page
+          texture_unit 0
+          frame_texture window_width, window_height,
+              transition_current_page
+          iris_shader
+          shader_set w := window_width
+          shader_set h := window_height
+          if InOut > 0 then
+              shader_set r := 1-transition_ratio
+              shader_set insideTex := 0
+              shader_set outsideTex := 1
+          else
+              shader_set r := transition_ratio
+              shader_set insideTex := 1
+              shader_set outsideTex := 0
+          rectangle 0, 0, window_width, window_height
+
+transition_ft_iris InOut:integer -> transition_ft_iris InOut, 1.5
+
+iris_shader ->
+// ----------------------------------------------------------------------------
+//    Fragment shader to implement the iris effect
+// ----------------------------------------------------------------------------
+    shader_program
+        fragment_shader <<
+        uniform sampler2D insideTex;
+        uniform sampler2D outsideTex;
+        uniform float w;
+        uniform float h;
+        uniform float r; /* 0.0 <= r <= 1.0 */
+        void main()
+        {
+            vec2 wh = vec2(w, h);
+            vec2 c = gl_FragCoord.xy - wh * 0.5;
+            vec2 texCoord = gl_TexCoord[0].xy;
+            float d = r*dot(wh, wh)/4.0;
+            float pixd = dot(c.xy, c.xy);
+            vec4 inside = texture2D(insideTex, texCoord);
+            vec4 outside = texture2D(outsideTex, texCoord);
+            gl_FragColor = mix(inside, outside, smoothstep(r-0.05, r+0.05, sqrt(pixd/d)));
+        }
+        >>
+
+
+// ============================================================================
+//
+//   Move in
+//
+// ============================================================================
+
+transition_ft_movein LeftRight:integer, TopBottom:integer, D:real ->
+// ----------------------------------------------------------------------------
+//    Next page is translated over old one
+// ----------------------------------------------------------------------------
+//    LeftRight: 1 = left to right, 0 = no translation, -1 = right to left
+//    TopBottom: 1 = top to bottom, 0 = no translation, -1 = bottom to top
+//    D: duration (seconds)
+    trans_ft_rm D, { transition_current_page }, { transition_next_page }, 2*LeftRight, 2*TopBottom
+
+transition_ft_movein LeftRight:integer, TopBottom:integer ->
+    transition_ft_movein LeftRight, TopBottom, 1.5
+
+
+// ============================================================================
+//
+//   Reveal
+//
+// ============================================================================
+
+transition_ft_reveal LeftRight:integer, TopBottom:integer, D:real ->
+// ----------------------------------------------------------------------------
+//    Previous page is translated to reveal next one
+// ----------------------------------------------------------------------------
+//    LeftRight: 1 = left to right, 0 = no translation, -1 = right to left
+//    TopBottom: 1 = top to bottom, 0 = no translation, -1 = bottom to top
+    trans_ft_rm D, { transition_next_page }, { transition_current_page }, LeftRight, TopBottom
+
+transition_ft_reveal LeftRight:integer, TopBottom:integer ->
+    transition_ft_reveal LeftRight, TopBottom, 1.5
+
+
+// ============================================================================
+//
+//   Common implementation for move in and reveal
+//
+// ============================================================================
+
+trans_ft_rm D:real, Body1:block, Body2:block, SX:integer, SY:integer ->
+// ----------------------------------------------------------------------------
+//    Implementation of move-in or reveal effect
+// ----------------------------------------------------------------------------
+  transition D,
+      locally
+          to_ratio -2 -> 1 - transition_ratio
+          to_ratio -1 -> -transition_ratio
+          to_ratio  0 -> 0
+          to_ratio  1 -> transition_ratio
+          to_ratio  2 -> transition_ratio - 1
+          to_ratio  Other -> error "Unexpected value"
+          color "white"
+          frame_texture window_width, window_height,
+              do Body1
+          locally
+              rectangle 0, 0, window_width, window_height
+          frame_texture window_width, window_height,
+              do Body2
+          locally
+              rectangle window_width*(to_ratio SX), window_height*(to_ratio SY), window_width, window_height
+
+
+// ============================================================================
+//
+//   Wipe
+//
+// ============================================================================
+
+transition_ft_wipe LeftRight:integer, TopBottom:integer, D:real ->
+// ----------------------------------------------------------------------------
+//    Wipe effect
+// ----------------------------------------------------------------------------
+  transition D,
+      locally
+          texture_unit 1
+          frame_texture window_width, window_height,
+              transition_next_page
+          texture_unit 0
+          frame_texture window_width, window_height,
+              transition_current_page
+          rectangle 0, 0, window_width, window_height
+          wipe_shader
+          shader_set w := window_width
+          shader_set h := window_height
+          trans_set_wipe_params 1, 0 ->
+              shader_set tex1 := 1
+              shader_set tex2 := 0
+              shader_set r := transition_ratio
+              shader_set kx := 1
+              shader_set ky := 0
+              shader_set k := 0.0
+          trans_set_wipe_params -1, 0 ->
+              shader_set tex1 := 0
+              shader_set tex2 := 1
+              shader_set r := 1-transition_ratio
+              shader_set kx := 1
+              shader_set ky := 0
+              shader_set k := 0.0
+          trans_set_wipe_params 0, 1 ->
+              shader_set tex1 := 0
+              shader_set tex2 := 1
+              shader_set r := 1-transition_ratio
+              shader_set kx := 0
+              shader_set ky := 1
+              shader_set k := 0.0
+          trans_set_wipe_params 0, -1 ->
+              shader_set tex1 := 1
+              shader_set tex2 := 0
+              shader_set r := transition_ratio
+              shader_set kx := 0
+              shader_set ky := 1
+              shader_set k := 0.0
+          trans_set_wipe_params 1, 1 ->
+              shader_set tex1 := 1
+              shader_set tex2 := 0
+              shader_set r := transition_ratio
+              shader_set kx := 0.5
+              shader_set ky := -0.5
+              shader_set k := 0.5
+          trans_set_wipe_params 1, -1 ->
+              shader_set tex1 := 1
+              shader_set tex2 := 0
+              shader_set r := transition_ratio
+              shader_set kx := 0.5
+              shader_set ky := 0.5
+              shader_set k := 0.0
+          trans_set_wipe_params -1, 1 ->
+              shader_set tex1 := 0
+              shader_set tex2 := 1
+              shader_set r := 1-transition_ratio
+              shader_set kx := 0.5
+              shader_set ky := 0.5
+              shader_set k := 0.0
+          trans_set_wipe_params -1, -1 ->
+              shader_set tex1 := 1
+              shader_set tex2 := 0
+              shader_set r := transition_ratio
+              shader_set kx := -0.5
+              shader_set ky := 0.5
+              shader_set k := 0.5
+          trans_set_wipe_params Other -> error "Invalid parameter"
+          trans_set_wipe_params LeftRight, TopBottom
+          rectangle 0, 0, window_width, window_height
+
+transition_ft_wipe LeftRight:integer, TopBottom:integer -> transition_ft_wipe LeftRight, TopBottom, 1.5
+
+wipe_shader ->
+// ----------------------------------------------------------------------------
+//    Fragment shader to implement the wipe effect
+// ----------------------------------------------------------------------------
+    shader_program
+        fragment_shader <<
+        uniform sampler2D tex1;
+        uniform sampler2D tex2;
+        uniform float kx, ky;
+        uniform float k;
+        uniform float w;
+        uniform float h;
+        uniform float r;     /* 0.0 <= r <= 1.0 */
+        void main()
+        {
+            vec2 wh = vec2(w, h);
+            vec2 coord = gl_FragCoord.xy/wh;
+            vec2 texCoord = gl_TexCoord[0].xy;
+            float v = k + coord.x*kx + coord.y*ky;
+            vec4 col1 = texture2D(tex1, texCoord);
+            vec4 col2 = texture2D(tex2, texCoord);
+            gl_FragColor = mix(col1, col2, smoothstep(r-0.05, r+0.05, v));
+        }
+        >>
