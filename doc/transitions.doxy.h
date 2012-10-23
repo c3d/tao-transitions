@@ -7,9 +7,7 @@
  * The Transitions module provides commands to easily add transition effects
  * to a presentation.
  * You may use the same transition for all pages, or you may select one effect
- * per page. When a transition command is used in a page, it is applied when
- * leaving that page (that is, when going from the current page to the next
- * one).@n
+ * per page.@n
  * Note that all commands that have <tt>_ft_</tt> in their name
  * (@ref transition_ft_dissolve for instance) convert the pages to frame
  * textures (2D images). Therefore, 3D scenes won't appear in 3D during the
@@ -18,9 +16,9 @@
  * during the transition.@n
  * All transitions take a duration parameter, @p D, which may be omitted. The
  * default duration is 1.5 seconds.@n
- * Here is an example (<a href="transitions.ddd.txt">transitions.ddd</a>):
+ * Here is an example.
  *
- * @include "transitions.ddd.txt"
+ * @include transitions.ddd
  *
  * @endtaomoduledescription{Transitions}
  *
@@ -32,9 +30,7 @@
  * Le module Transitions fournit des commandes qui vous permettent d'ajouter
  * simplement des effets de transitions à une présentation. Vous pouvez
  * utiliser la même transition pour toutes les pages, ou bien en choisir une
- * par page. Lorsqu'une commande de transition est utilisée dans une page, elle
- * s'applique lorsqu'on quitte cette page (c'est-à-dire lorsqu'on passe de la
- * page courante à la nouvelle page).@n
+ * par page.@n
  * Notez que les commandes dont le nom contient <tt>_ft_</tt> (par exemple,
  * @ref transition_ft_dissolve) convertissent les pages en textures 2D avant
  * de leur appliquer l'effet. Par conséquent, les pages qui font usage de la 3D
@@ -43,9 +39,9 @@
  * en 3D y compris lors de la transition.@n
  * Toutes les transitions acceptent un paramètre @p D de durée. La valeur par
  * défaut est 1.5 seconde.@n
- * Voici un exemple (<a href="transitions_fr.ddd.txt">transitions_fr.ddd</a>):
+ * Voici un exemple.
  *
- * @include "transitions_fr.ddd.txt"
+ * @include transitions_fr.ddd
  *
  * @endtaomoduledescription{Transitions}
  *
