@@ -16,9 +16,9 @@
  * during the transition.@n
  * All transitions take a duration parameter, @p D, which may be omitted. The
  * default duration is 1.5 seconds.@n
- * Here is an example.
+ * Here is an example (<a href="transitions.ddd.txt">transitions.ddd</a>):
  *
- * @include transitions.ddd
+ * @include "transitions.ddd.txt"
  *
  * @endtaomoduledescription{Transitions}
  *
@@ -39,9 +39,9 @@
  * en 3D y compris lors de la transition.@n
  * Toutes les transitions acceptent un paramètre @p D de durée. La valeur par
  * défaut est 1.5 seconde.@n
- * Voici un exemple.
+ * Voici un exemple (<a href="transitions_fr.ddd.txt">transitions_fr.ddd</a>):
  *
- * @include transitions_fr.ddd
+ * @include "transitions_fr.ddd.txt"
  *
  * @endtaomoduledescription{Transitions}
  *
