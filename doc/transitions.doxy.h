@@ -2,7 +2,7 @@
  * @~english
  * @taomoduledescription{Transitions, Page transition effects}
  *
- * Commands to add special transition effects when changing pages.
+ * <tt>import Transitions</tt> - Commands to add special transition effects when changing pages.\n
  *
  * The Transitions module provides commands to easily add transition effects
  * to a presentation.
@@ -27,7 +27,7 @@
  * @~french
  * @taomoduledescription{Transitions, Effets de transitions entre pages}
  *
- * Commandes pour ajouter des effets de transitions lors des changements de page.
+ * <tt>import Transitions</tt> - Commandes pour ajouter des effets de transitions lors des changements de page.\n
  *
  * Le module Transitions fournit des commandes qui vous permettent d'ajouter
  * simplement des effets de transitions à une présentation. Vous pouvez
