@@ -11,7 +11,7 @@ module_description
     import_name "Transitions"
     author "Taodyne SAS"
     website "http://www.taodyne.com"
-    version 1.002
+    version 1.001
 
 
 module_description "fr",
@@ -35,6 +35,8 @@ transition_ft_dissolve D:real ->
             frame_texture window_width, window_height,
                 transition_current_page
             dissolve_shader
+            shader_set w := window_width
+            shader_set h := window_height
             shader_set tex1 := 0
             shader_set tex2 := 1
             shader_set r := transition_ratio
