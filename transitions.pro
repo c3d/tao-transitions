@@ -16,5 +16,5 @@ QMAKE_SUBSTITUTES = doc/Doxyfile.in
 QMAKE_DISTCLEAN = doc/Doxyfile
 DOXYFILE = doc/Doxyfile
 DOXYLANG = en,fr
-DOXYADDFILES = doc/transitions.ddd.txt doc/transitions_fr.ddd.txt
+DOXYADDFILES = doc/transitions.ddd doc/transitions_fr.ddd
 include(../modules_doc.pri)
