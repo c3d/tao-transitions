@@ -1,8 +1,7 @@
 /**
  * @~english
  * @taomoduledescription{Transitions, Page transition effects}
- *
- * <tt>import Transitions</tt> - Commands to add special transition effects when changing pages.\n
+ * <tt>import Transitions</tt> - Commands to add special transition effects when changing pages.@n
  *
  * The Transitions module provides commands to easily add transition effects
  * to a presentation.
@@ -18,16 +17,15 @@
  * during the transition.@n
  * All transitions take a duration parameter, @p D, which may be omitted. The
  * default duration is 1.5 seconds.@n
- * Here is an example (<a href="transitions.ddd.txt">transitions.ddd</a>):
+ * Here is an example (<a href="transitions.ddd">transitions.ddd</a>):
  *
- * @include "transitions.ddd.txt"
+ * @include transitions.ddd
  *
  * @endtaomoduledescription{Transitions}
  *
  * @~french
  * @taomoduledescription{Transitions, Effets de transitions entre pages}
- *
- * <tt>import Transitions</tt> - Commandes pour ajouter des effets de transitions lors des changements de page.\n
+ * <tt>import Transitions</tt> - Commandes pour ajouter des effets de transitions lors des changements de page.@n
  *
  * Le module Transitions fournit des commandes qui vous permettent d'ajouter
  * simplement des effets de transitions à une présentation. Vous pouvez
@@ -43,9 +41,9 @@
  * en 3D y compris lors de la transition.@n
  * Toutes les transitions acceptent un paramètre @p D de durée. La valeur par
  * défaut est 1.5 seconde.@n
- * Voici un exemple (<a href="transitions_fr.ddd.txt">transitions_fr.ddd</a>):
+ * Voici un exemple (<a href="transitions_fr.ddd">transitions_fr.ddd</a>):
  *
- * @include "transitions_fr.ddd.txt"
+ * @include transitions_fr.ddd
  *
  * @endtaomoduledescription{Transitions}
  *
