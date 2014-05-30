@@ -19,6 +19,66 @@ module_description "fr",
     description "Commandes pour ajouter des effets de transitions lors des changements de page"
 
 
+add_search_path "transition:", module_dir
+
+
+// ============================================================================
+//
+//   Transition shader (as found e.g. on GLSL.io)
+//
+// ============================================================================
+
+transition_with_shader D:real, Shader:text, ShaderParms ->
+    transition D,
+        locally
+            texture_unit 1
+            frame_texture window_width, window_height,
+                transition_next_page
+            texture_unit 0
+            frame_texture window_width, window_height,
+                transition_current_page
+            shader_program
+                fragment_shader_file "transition:" & Shader
+            shader_set from := 0
+            shader_set "to" := 1 // Hack because "to" has special priority
+            shader_set progress := transition_ratio
+            shader_set resolution := window_width, window_height
+            ShaderParms
+            rectangle window_width, window_height
+
+transition_with_shader D:real, Shader:text ->
+    transition_with_shader D, Shader, false
+
+
+transition_pot_leaf D -> transition_with_shader D, "PotLeaf.fs"
+transition_glitch_memories D -> transition_with_shader D, "GlitchMemories.fs"
+transition_dream_zoom D -> transition_with_shader D, "DreamZoom.fs",
+    shader_set rotation := 6
+    shader_set scale := 1.2
+transition_square_swipe D -> transition_with_shader D, "SquareSwipe.fs",
+    shader_set squares := 10, 10
+    shader_set direction := 1, -0.5
+    shader_set smoothness := 1.6
+transition_random_squares D -> transition_with_shader D, "RandomSquares.fs",
+    shader_set size := 10, 10
+    shader_set smoothness := 0.5
+transition_pin_wheel D -> transition_with_shader D, "PinWheel.fs"
+transition_slide D -> transition_with_shader D, "Slide.fs",
+    shader_set translateX := 1
+    shader_set translateY := 0
+transition_cross_zoom D -> transition_with_shader D, "CrossZoom.fs"
+transition_dissolve D -> transition_with_shader D, "Dissolve.fs",
+    shader_set blocksize := 1
+transition_kaleidoscope D -> transition_with_shader D, "Kaleidoscope.fs",
+    shader_set speed := 1.0
+    shader_set angle := 2.0
+    shader_set power := 2.0
+transition_simple_flip D -> transition_with_shader D, "SimpleFlip.fs"
+transition_page_curl D -> transition_with_shader D, "PageCurl.fs"
+
+
+
+
 // ============================================================================
 //
 //   Dissolve
